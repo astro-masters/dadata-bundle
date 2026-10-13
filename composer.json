@@ -1,28 +1,40 @@
 {
-    "name": "velhron/dadata-bundle",
-    "description": "DaData for Symfony",
+    "name": "astro-masters/dadata-bundle",
+    "description": "DaData bundle for Symfony 8",
     "keywords": ["dadata", "symfony-bundle", "symfony-dadata"],
     "type": "symfony-bundle",
     "license": "MIT",
+    "homepage": "https://github.com/astro-masters/dadata-bundle",
+    "support": {
+        "source": "https://github.com/astro-masters/dadata-bundle"
+    },
     "authors": [
         {
             "name": "Velhron",
-            "email": "velhron@gmail.com"
+            "email": "velhron@gmail.com",
+            "role": "Original author"
+        },
+        {
+            "name": "Astro Masters",
+            "homepage": "https://github.com/astro-masters",
+            "role": "Maintainer"
         }
     ],
     "require": {
-        "php": "^7.1|^8.0",
+        "php": "^8.5",
         "ext-json": "*",
-        "symfony/config": "^4.4|^5.0|^6.0|^7.0",
-        "symfony/dependency-injection": "^4.4|^5.0|^6.0|^7.0",
-        "symfony/http-client": "^4.4|^5.0|^6.0|^7.0",
-        "symfony/http-kernel": "^4.4|^5.0|^6.0|^7.0",
-        "symfony/yaml": "^4.4|^5.0|^6.0|^7.0"
+        "symfony/config": "^8.0",
+        "symfony/dependency-injection": "^8.0",
+        "symfony/http-client": "^8.0",
+        "symfony/http-client-contracts": "^3.0",
+        "symfony/http-kernel": "^8.0",
+        "symfony/yaml": "^8.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.16",
-        "phpstan/phpstan": "^0.12.25",
-        "symfony/phpunit-bridge": "^4.4|^5.0|^6.0|^7.0"
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^12.5",
+        "symfony/framework-bundle": "^8.0"
     },
     "autoload": {
         "psr-4": {

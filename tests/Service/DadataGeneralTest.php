@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Velhron\DadataBundle\Tests\Service;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Velhron\DadataBundle\Service\DadataGeneral;
@@ -33,9 +34,7 @@ class DadataGeneralTest extends DadataServiceTest
         $this->assertEquals(7, $result->clean);
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testRequestParams(string $methodName, string $methodUrl, string $filePath): void
     {
         $expectedUrl = 'https://example.com/general'.$methodUrl;
@@ -68,7 +67,7 @@ class DadataGeneralTest extends DadataServiceTest
         $service->$methodName();
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [

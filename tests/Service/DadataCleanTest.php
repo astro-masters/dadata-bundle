@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Velhron\DadataBundle\Tests\Service;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
+use Velhron\DadataBundle\Exception\DadataException;
 use Velhron\DadataBundle\Service\DadataClean;
 
 class DadataCleanTest extends DadataServiceTest
@@ -77,9 +81,17 @@ class DadataCleanTest extends DadataServiceTest
         $this->assertEquals('serega@yandex.ru', $result->email);
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    public function testInvalidCleanResponse(): void
+    {
+        $httpClient = new MockHttpClient(new MockResponse('[]'));
+        $service = new DadataClean('token', 'secret', $httpClient, $this->requestFactory, $this->responseFactory);
+
+        $this->expectException(DadataException::class);
+
+        $service->cleanAddress('Москва');
+    }
+
+    #[DataProvider('dataProvider')]
     public function testRequestParams(
         string $methodName,
         string $methodUrl,
@@ -117,7 +129,7 @@ class DadataCleanTest extends DadataServiceTest
         $service->$methodName($query);
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [

@@ -51,9 +51,13 @@ class DadataClean extends AbstractService
                 'body' => json_encode($request->getBody()),
             ]);
 
-            $result = json_decode($response->getContent(), true);
+            $result = $this->decodeResponse($response);
 
-            return (1 === count($result)) ? array_shift($result) : $result;
+            if (1 !== count($result) || !isset($result[0]) || !is_array($result[0])) {
+                throw new DadataException(new \JsonException('Ответ стандартизации должен содержать один объект'));
+            }
+
+            return $result[0];
         } catch (ExceptionInterface $exception) {
             throw new DadataException($exception);
         }

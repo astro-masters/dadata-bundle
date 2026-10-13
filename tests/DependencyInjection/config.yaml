@@ -1,3 +1,5 @@
+framework: ~
+
 velhron_dadata:
   token: 'token'
   secret: 'secret'

@@ -1,69 +1,48 @@
 # Symfony DaData
 
-[![Build Status](https://travis-ci.com/Velhron/dadata-bundle.svg?token=tDXe7dqwQ2esgAZeQapf&branch=master)](https://travis-ci.com/Velhron/dadata-bundle)
-
 ## Описание
 
-Symfony DaDataBundle предназначен для работы с API сервиса [ДаДата](https://dadata.ru).
+Symfony DaDataBundle предназначен для работы с API сервиса [ДаДата](https://dadata.ru). Это форк [Velhron/dadata-bundle](https://github.com/Velhron/dadata-bundle) для PHP 8.5 и Symfony 8.
 
 ## Установка
 
-Данный бандл может быть установлен с помощью [Composer](https://getcomposer.org).
+Для работы нужны PHP 8.5.x и Symfony 8.x.
 
-### Приложения, которые используют Symfony Flex
-
-Откройте командную консоль, перейдите в каталог вашего проекта и выполните:
+Пока пакет не опубликован на Packagist, добавьте репозиторий форка в проект и установите ветку `master`:
 
 ```bash
-composer require velhron/dadata-bundle
+composer config repositories.astro-masters-dadata vcs https://github.com/astro-masters/dadata-bundle
+composer require astro-masters/dadata-bundle:dev-master
 ```
 
-### Приложения, которые не используют Symfony Flex
+Если в проекте установлен `velhron/dadata-bundle`, сначала выполните `composer remove velhron/dadata-bundle`: оба пакета используют одни PHP-классы.
 
-#### Шаг #1: Загрузка бандла
-
-Откройте командную консоль, перейдите в каталог вашего проекта и выполните следующую команду, чтобы загрузить последнюю 
-стабильную версию этого пакета:
+После публикации тега `v1.0.0` на Packagist запись `repositories` в проекте будет не нужна. Для новой установки достаточно:
 
 ```bash
-composer require velhron/dadata-bundle
+composer require astro-masters/dadata-bundle:^1.0
 ```
 
-#### Шаг #2: Активация бандла
-
-Включите пакет, добавив его в список зарегистрированных пакетов в файле `app/AppKernel.php` вашего проекта:
+Если бандл не зарегистрирован автоматически, добавьте его в `config/bundles.php` приложения:
 
 ```php
 <?php
-// app/AppKernel.php
 
-// ...
-class AppKernel extends Kernel
-{
-    public function registerBundles()
-    {
-        $bundles = array(
-            // ...
-            new Velhron\DadataBundle\VelhronDadataBundle(),
-        );
-
-        // ...
-    }
-
-    // ...
-}
+return [
+    Velhron\DadataBundle\VelhronDadataBundle::class => ['all' => true],
+];
 ```
 
 ## Конфигурация
 
-Создайте файл конфигурации `config/packages/dadata.yaml`
+Создайте файл конфигурации `config/packages/velhron_dadata.yaml`:
 
 ### Пример
 
 ```yaml
 velhron_dadata:
-    token: 'token'
-    secret: 'secret'
+    token: '%env(DADATA_TOKEN)%'
+    secret: '%env(DADATA_SECRET)%'
     # Если у вас инфраструктура состоит из n-сервисов, которые обращаются в dadata, то для контроля запросов в dadata
     # в одной точке, Вам возможно потребуется прокси-кеш. Для замены оригинальных url от dadata на Ваш прокси, можете
     # заполнить следующие необязательные параметры
@@ -168,3 +147,7 @@ $value = $response[0]->value;
 ## Лицензия
 
 [MIT License](https://opensource.org/licenses/mit-license) © Velhron
+
+## Публикация
+
+Перед первым выпуском проверьте тесты на PHP 8.5 и Symfony 8.0/8.1, создайте тег `v1.0.0` в этом форке и отправьте его в `origin`. Затем зарегистрируйте `https://github.com/astro-masters/dadata-bundle` на [Packagist](https://packagist.org/) и настройте обновление пакета из GitHub. PHP namespace `Velhron\DadataBundle` сохранён для совместимости с существующим кодом.

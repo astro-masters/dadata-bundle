@@ -27,7 +27,7 @@ class DadataGeneral extends AbstractService
                 'query' => $request->getBody(),
             ]);
 
-            return json_decode($response->getContent(), true) ?? [];
+            return $this->decodeResponse($response);
         } catch (ExceptionInterface $exception) {
             throw new DadataException($exception);
         }
@@ -60,7 +60,7 @@ class DadataGeneral extends AbstractService
      *
      * @throws DadataException|InvalidConfigException
      */
-    public function stat(string $date = null): StatResponse
+    public function stat(?string $date = null): StatResponse
     {
         /** @var StatRequest $request */
         $request = $this->requestFactory->create('stat');

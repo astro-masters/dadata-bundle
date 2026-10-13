@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Velhron\DadataBundle\Service;
 
+use JsonException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 use Velhron\DadataBundle\Exception\DadataException;
 use Velhron\DadataBundle\Model\Request\AbstractRequest;
 use Velhron\DadataBundle\RequestFactory;
@@ -55,4 +57,19 @@ abstract class AbstractService
      * @throws DadataException
      */
     abstract protected function query(AbstractRequest $request): array;
+
+    protected function decodeResponse(ResponseInterface $response): array
+    {
+        try {
+            $data = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            throw new DadataException($exception);
+        }
+
+        if (!is_array($data)) {
+            throw new DadataException(new JsonException('Ответ должен содержать объект или массив'));
+        }
+
+        return $data;
+    }
 }

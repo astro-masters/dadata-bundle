@@ -50,7 +50,7 @@ class DadataIplocate extends AbstractService
                 'query' => $request->getBody(),
             ]);
 
-            return json_decode($response->getContent(), true) ?? [];
+            return $this->decodeResponse($response);
         } catch (ExceptionInterface $exception) {
             throw new DadataException($exception);
         }

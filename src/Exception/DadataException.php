@@ -5,12 +5,19 @@ declare(strict_types=1);
 namespace Velhron\DadataBundle\Exception;
 
 use Exception;
+use JsonException;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 class DadataException extends Exception
 {
-    public function __construct(ExceptionInterface $exception)
+    public function __construct(ExceptionInterface|JsonException $exception)
     {
+        if ($exception instanceof JsonException) {
+            parent::__construct('Сервис вернул некорректный JSON-ответ', 0, $exception);
+
+            return;
+        }
+
         switch ($exception->getCode()) {
             case 400:
                 $message = 'Некорректный запрос (невалидный JSON или XML)';

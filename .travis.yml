@@ -1,40 +1,27 @@
-language: php
+language: minimal
 
-php:
-  - '7.2'
-  - '7.3'
-  - '7.4'
-  - '8.0'
+services:
+  - docker
 
 env:
-  - SYMFONY_VERSION=4.4.*
-  - SYMFONY_VERSION=5.4.*
-
-matrix:
-  include:
-    - php: 8.0
-      env: SYMFONY_VERSION=6.0.*
-
-cache:
-  directories:
-    - ~/.composer/cache/files
+  - SYMFONY_VERSION=8.0.*
+  - SYMFONY_VERSION=8.1.*
 
 install:
-  - composer require symfony/config:${SYMFONY_VERSION} --no-update --no-scripts --prefer-dist
-  - composer require symfony/dependency-injection:${SYMFONY_VERSION} --no-update --no-scripts --prefer-dist
-  - composer require symfony/http-client:${SYMFONY_VERSION} --no-update --no-scripts --prefer-dist
-  - composer require symfony/http-kernel:${SYMFONY_VERSION} --no-update --no-scripts --prefer-dist
-  - composer require symfony/yaml:${SYMFONY_VERSION} --no-update --no-scripts --prefer-dist
-
-  - composer require --dev symfony/phpunit-bridge:${SYMFONY_VERSION} --no-update --no-scripts --prefer-dist
-
-  - composer update --prefer-dist
-
-  - vendor/bin/simple-phpunit install
+  - >-
+    docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e COMPOSER_HOME=/tmp/composer
+    -e SYMFONY_VERSION -v "$PWD:/app" -w /app ghcr.io/astro-masters/symfony-rr:8.5-dev
+    sh -lc 'composer update --with "symfony/config:$SYMFONY_VERSION"
+    --with "symfony/dependency-injection:$SYMFONY_VERSION"
+    --with "symfony/framework-bundle:$SYMFONY_VERSION"
+    --with "symfony/http-client:$SYMFONY_VERSION"
+    --with "symfony/http-kernel:$SYMFONY_VERSION"
+    --with "symfony/yaml:$SYMFONY_VERSION"
+    --no-interaction --prefer-dist --no-progress'
 
 script:
-  - composer check
-  - composer validate --strict --no-check-lock
-  - vendor/bin/php-cs-fixer fix -v --dry-run
-  - vendor/bin/phpstan analyse
-  - vendor/bin/simple-phpunit $PHPUNIT_FLAGS
+  - docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD:/app" -w /app ghcr.io/astro-masters/symfony-rr:8.5-dev composer validate --strict --no-check-lock
+  - docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD:/app" -w /app ghcr.io/astro-masters/symfony-rr:8.5-dev composer check-platform-reqs
+  - docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD:/app" -w /app ghcr.io/astro-masters/symfony-rr:8.5-dev php vendor/bin/phpunit -c phpunit.xml.dist
+  - docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD:/app" -w /app ghcr.io/astro-masters/symfony-rr:8.5-dev php vendor/bin/phpstan analyse --no-progress
+  - docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD:/app" -w /app ghcr.io/astro-masters/symfony-rr:8.5-dev php vendor/bin/php-cs-fixer fix --dry-run --using-cache=no

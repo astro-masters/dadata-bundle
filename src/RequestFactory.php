@@ -30,6 +30,10 @@ class RequestFactory
             throw new InvalidConfigException("Для метода $methodName не указан параметр \"request\"");
         }
 
+        if (!is_subclass_of($requestClass, AbstractRequest::class)) {
+            throw new InvalidConfigException("Для метода $methodName указан некорректный класс запроса");
+        }
+
         $url = $this->resolver->getMatchedUrl($methodName);
 
         if (null === $url) {

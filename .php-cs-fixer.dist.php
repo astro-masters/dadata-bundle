@@ -11,5 +11,8 @@ return (new PhpCsFixer\Config())
         '@Symfony' => true,
         'array_syntax' => ['syntax' => 'short'],
         'declare_strict_types' => true,
+        'global_namespace_import' => false,
+        'no_superfluous_phpdoc_tags' => false,
+        'trailing_comma_in_multiline' => ['elements' => ['arrays']],
     ])
     ->setFinder($finder);

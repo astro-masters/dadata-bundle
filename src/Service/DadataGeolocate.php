@@ -52,7 +52,7 @@ class DadataGeolocate extends AbstractService
                 'body' => json_encode($request->getBody()),
             ]);
 
-            return json_decode($response->getContent(), true) ?? [];
+            return $this->decodeResponse($response);
         } catch (ExceptionInterface $exception) {
             throw new DadataException($exception);
         }

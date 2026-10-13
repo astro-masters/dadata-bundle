@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Velhron\DadataBundle\Tests\Service;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Velhron\DadataBundle\Service\DadataIplocate;
@@ -25,9 +26,7 @@ class DadataIplocateTest extends DadataServiceTest
         $this->assertEquals('31000001000000000000000', $result->fiasCode);
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testRequestParams(string $methodName, string $methodUrl, string $filePath): void
     {
         $expectedUrl = 'https://example.com/suggetions'.$methodUrl;
@@ -61,7 +60,7 @@ class DadataIplocateTest extends DadataServiceTest
         $service->$methodName('46.226.227.20');
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [

@@ -30,6 +30,10 @@ class ResponseFactory
             throw new InvalidConfigException("Для метода $methodName не указан параметр \"response\"");
         }
 
+        if (!is_subclass_of($responseClass, AbstractResponse::class)) {
+            throw new InvalidConfigException("Для метода $methodName указан некорректный класс ответа");
+        }
+
         return new $responseClass($data);
     }
 }

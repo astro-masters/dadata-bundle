@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Velhron\DadataBundle\Tests\Service;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
+use Velhron\DadataBundle\Exception\DadataException;
 use Velhron\DadataBundle\Service\DadataSuggest;
 
 class DadataSuggestTest extends DadataServiceTest
@@ -23,6 +27,16 @@ class DadataSuggestTest extends DadataServiceTest
         $this->assertCount(10, $result);
         $this->assertEquals('г Москва, ул Хабаровская', $result[0]->value);
         $this->assertEquals('0c5b2444-70a0-4932-980c-b4dc0d3f02b5', $result[0]->regionFiasId);
+    }
+
+    public function testInvalidJsonResponse(): void
+    {
+        $httpClient = new MockHttpClient(new MockResponse('{'));
+        $service = new DadataSuggest('token', 'secret', $httpClient, $this->requestFactory, $this->responseFactory);
+
+        $this->expectException(DadataException::class);
+
+        $service->suggestAddress('Москва');
     }
 
     public function testSuggestParty(): void
@@ -323,9 +337,7 @@ class DadataSuggestTest extends DadataServiceTest
         $this->assertEquals('52', $result[0]->regionCode);
     }
 
-    /**
-     * @dataProvider suggestDataProvider
-     */
+    #[DataProvider('suggestDataProvider')]
     public function testSuggestRequestParams(
         string $methodName,
         string $methodUrl,
@@ -363,7 +375,7 @@ class DadataSuggestTest extends DadataServiceTest
         $service->$methodName($query);
     }
 
-    public function suggestDataProvider(): array
+    public static function suggestDataProvider(): array
     {
         return [
             [
