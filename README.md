@@ -8,7 +8,13 @@ Symfony DaDataBundle предназначен для работы с API сер�
 
 Для работы нужны PHP 8.5 или новее в линейке 8.x и Symfony 8.x.
 
-Пока пакет не опубликован на Packagist, добавьте репозиторий форка в проект и установите ветку `master`:
+После публикации пакета на Packagist установите стабильную версию:
+
+```bash
+composer require astro-masters/dadata-bundle:^1.0
+```
+
+Если пакет ещё не появился в индексе Packagist, временно добавьте репозиторий форка в проект и установите ветку `master`:
 
 ```bash
 composer config repositories.astro-masters-dadata vcs https://github.com/astro-masters/dadata-bundle
@@ -17,11 +23,7 @@ composer require astro-masters/dadata-bundle:dev-master
 
 Если в проекте установлен `velhron/dadata-bundle`, сначала выполните `composer remove velhron/dadata-bundle`: оба пакета используют одни PHP-классы.
 
-После публикации тега `v1.0.0` на Packagist запись `repositories` в проекте будет не нужна. Для новой установки достаточно:
-
-```bash
-composer require astro-masters/dadata-bundle:^1.0
-```
+После появления стабильной версии в Packagist удалите временную запись `repositories` из проекта и перейдите с `dev-master` на `^1.0`.
 
 Если бандл не зарегистрирован автоматически, добавьте его в `config/bundles.php` приложения:
 
@@ -150,4 +152,4 @@ $value = $response[0]->value;
 
 ## Публикация
 
-Перед первым выпуском проверьте тесты на PHP 8.5 и Symfony 8.0/8.1, создайте тег `v1.0.0` в этом форке и отправьте его в `origin`. Затем зарегистрируйте `https://github.com/astro-masters/dadata-bundle` на [Packagist](https://packagist.org/) и настройте обновление пакета из GitHub. PHP namespace `Velhron\DadataBundle` сохранён для совместимости с существующим кодом.
+Первый релиз — `v1.0.0`. Пакет публикуется из [форка Astro Masters](https://github.com/astro-masters/dadata-bundle) на [Packagist](https://packagist.org/packages/astro-masters/dadata-bundle). Перед следующими выпусками проверяйте тесты на PHP 8.5 и Symfony 8.x, отправляйте новый тег в `origin` и проверяйте обновление Packagist. PHP namespace `Velhron\DadataBundle` сохранён для совместимости с существующим кодом.
