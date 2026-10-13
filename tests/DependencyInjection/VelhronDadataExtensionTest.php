@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Velhron\DadataBundle\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Yaml\Yaml;
 use Velhron\DadataBundle\DependencyInjection\VelhronDadataExtension;
 use Velhron\DadataBundle\Service\DadataSuggest;
 use Velhron\DadataBundle\Tests\TestingKernel;
+use Velhron\DadataBundle\VelhronDadataBundle;
 
 class VelhronDadataExtensionTest extends TestCase
 {
@@ -19,6 +23,32 @@ class VelhronDadataExtensionTest extends TestCase
         $kernel->boot();
 
         $this->assertInstanceOf(DadataSuggest::class, $kernel->getContainer()->get('test.dadata_suggest'));
+
+        $kernel->shutdown();
+    }
+
+    public function testSymfonyContainerWithoutConfiguration(): void
+    {
+        $kernel = new class('noconfig', false) extends Kernel {
+            public function getCacheDir(): string
+            {
+                return sys_get_temp_dir().'/velhron-dadata-bundle-tests/no-config-cache';
+            }
+
+            public function registerBundles(): iterable
+            {
+                return [new FrameworkBundle(), new VelhronDadataBundle()];
+            }
+
+            public function registerContainerConfiguration(LoaderInterface $loader): void
+            {
+                $loader->load(__DIR__.'/no-config.yaml');
+            }
+        };
+
+        $kernel->boot();
+
+        $this->assertFalse($kernel->getContainer()->has(DadataSuggest::class));
 
         $kernel->shutdown();
     }
@@ -56,5 +86,36 @@ class VelhronDadataExtensionTest extends TestCase
         $this->assertSame('https://dadata.ru/api/v2', $containerBuilder->getParameter('velhron_dadata.base_general_url'));
         $this->assertSame('https://cleaner.dadata.ru/api/v1/clean', $containerBuilder->getParameter('velhron_dadata.base_cleaner_url'));
         $this->assertSame('https://suggestions.dadata.ru/suggestions/api/4_1/rs', $containerBuilder->getParameter('velhron_dadata.base_suggestions_url'));
+    }
+
+    public function testRegisterWithoutConfiguration(): void
+    {
+        $containerBuilder = new ContainerBuilder();
+
+        $extension = new VelhronDadataExtension();
+        $extension->load([[]], $containerBuilder);
+
+        $this->assertFalse($containerBuilder->hasParameter('velhron_dadata.token'));
+        $this->assertFalse($containerBuilder->hasDefinition(DadataSuggest::class));
+    }
+
+    public function testRegisterWithoutToken(): void
+    {
+        $containerBuilder = new ContainerBuilder();
+
+        $this->expectExceptionMessage('token');
+
+        $extension = new VelhronDadataExtension();
+        $extension->load([['secret' => 'secret']], $containerBuilder);
+    }
+
+    public function testRegisterWithoutSecret(): void
+    {
+        $containerBuilder = new ContainerBuilder();
+
+        $this->expectExceptionMessage('secret');
+
+        $extension = new VelhronDadataExtension();
+        $extension->load([['token' => 'token']], $containerBuilder);
     }
 }

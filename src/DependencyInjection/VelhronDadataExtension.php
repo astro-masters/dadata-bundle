@@ -16,6 +16,10 @@ class VelhronDadataExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
+        if ([] === array_filter($configs)) {
+            return;
+        }
+
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
